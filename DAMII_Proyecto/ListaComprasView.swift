@@ -22,6 +22,8 @@ struct ListaComprasView: View {
     
     @State private var articuloEliminar: Articulo?
     
+    @StateObject private var categoriaViewModel = CategoriaViewModel()
+    
     var body: some View {
         ZStack {
             VStack {
@@ -29,7 +31,7 @@ struct ListaComprasView: View {
                     ForEach(articulos) { item in
                         HStack {
                             if !marcandoArticulos && !eliminandoArticulos {
-                                NavigationLink(destination: DetalleArticuloView(articulo: item)) {
+                                NavigationLink(destination: DetalleArticuloView(articulo: item, categoriaViewModel: categoriaViewModel)) {
                                     ListaComprasItem(
                                         item: item,
                                         marcandoArticulos: $marcandoArticulos,
@@ -106,7 +108,11 @@ struct ListaComprasView: View {
             }
         }
         .sheet(isPresented: $mostrarFormRegistro) {
-            RegistroArticuloView(mostrar: $mostrarFormRegistro)
+            RegistroArticuloView(mostrar: $mostrarFormRegistro,
+                                 categoriaViewModel: categoriaViewModel)
+        }
+        .onDisappear {
+            mostrandoAcciones = false
         }
     }
     

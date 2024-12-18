@@ -11,6 +11,7 @@ struct DetalleArticuloView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var articulo: Articulo
+    @ObservedObject var categoriaViewModel: CategoriaViewModel
     @State private var mostrarAlerta = false
     @State private var mostrarFormulario = false
     
@@ -20,6 +21,8 @@ struct DetalleArticuloView: View {
                 Text("Nombre: \(articulo.nombre ?? "Sin nombre")")
                     .font(.headline)
                 Text("Cantidad: \(articulo.cantidad)")
+                    .font(.headline)
+                Text("Categoría: \(articulo.categoria ?? "Sin categoría")")
                     .font(.headline)
                 Text("Prioridad: \(articulo.altaPrioridad ? "Alta" : "Baja")")
                     .font(.headline)
@@ -32,12 +35,11 @@ struct DetalleArticuloView: View {
                     Text(notasAdicionales.isEmpty ? "Sin notas Adicionales" : notasAdicionales)
                         .font(notasAdicionales.isEmpty ? .headline : .subheadline)
                 }
-
             }
         }
         .alert(isPresented: $mostrarAlerta) {
             Alert(
-                title: Text("¿Eliminar artículo '\(articulo.nombre ?? "Sin nombre")?"),
+                title: Text("¿Eliminar artículo '\(articulo.nombre ?? "Sin nombre")'?"),
                 message: Text("Esta acción no se puede deshacer"),
                 primaryButton: .destructive(Text("Eliminar")) {
                     eliminarArticulo()
@@ -63,7 +65,7 @@ struct DetalleArticuloView: View {
             }
         }
         .sheet(isPresented: $mostrarFormulario) {
-            EditarArticuloView(articulo: articulo, mostrar: $mostrarFormulario)
+            EditarArticuloView(articulo: articulo, categoriaViewModel: categoriaViewModel, mostrar: $mostrarFormulario)
         }
     }
     

@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="21H1320" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21H1222" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Articulo" representedClassName="Articulo" syncable="YES" codeGenerationType="class">
         <attribute name="altaPrioridad" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="cantidad" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="categoria" attributeType="String"/>
         <attribute name="comprado" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="nombre" attributeType="String"/>
         <attribute name="notasAdicionales" optional="YES" attributeType="String"/>
-        <relationship name="categoria" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Categoria" inverseName="articulos" inverseEntity="Categoria"/>
-        <relationship name="tiendas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tienda" inverseName="articulos" inverseEntity="Tienda"/>
-    </entity>
-    <entity name="Categoria" representedClassName="Categoria" syncable="YES" codeGenerationType="class">
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="nombre" attributeType="String"/>
-        <relationship name="articulos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Articulo" inverseName="categoria" inverseEntity="Articulo"/>
-    </entity>
-    <entity name="Tienda" representedClassName="Tienda" syncable="YES" codeGenerationType="class">
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="nombre" attributeType="String"/>
-        <relationship name="articulos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Articulo" inverseName="tiendas" inverseEntity="Articulo"/>
+        <attribute name="tienda" optional="YES" attributeType="String"/>
     </entity>
 </model>
