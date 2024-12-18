@@ -20,8 +20,10 @@ struct ListaComprasItem: View {
             let prioridad = item.altaPrioridad ? "Alta" : "Baja"
             let notasAdicionales = item.notasAdicionales ?? ""
             let tieneNotas = notasAdicionales.isEmpty ? "No" : "Sí"
+            let categoria = item.categoria ?? "Sin categoría"
             CustomText01(texto: nombre, comprado: item.comprado, esHeadline: false)
             CustomText01(texto: "Cantidad: \(item.cantidad)", comprado: item.comprado)
+            CustomText01(texto: "Categoría: \(categoria)", comprado: item.comprado)
             CustomText01(texto: "Prioridad: \(prioridad)", comprado: item.comprado)
             CustomText01(texto: "Notas Adicionales: \(tieneNotas)", comprado: item.comprado)
         }

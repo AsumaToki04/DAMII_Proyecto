@@ -18,46 +18,80 @@ struct RegistroArticuloView: View {
     @State private var textoCantidad: String = ""
     @State private var altaPrioridad: Bool = false
     @State private var notasAdicionales: String = ""
+    @State private var categoria: String = "Seleccionar categoría"
+    
+    @ObservedObject var categoriaViewModel: CategoriaViewModel
     
     var body: some View {
         NavigationView {
-            Form {
-                VStack(alignment: .leading) {
-                    CustomTextField01(placeholder: "Nombre", texto: $nombre)
-                    CustomTextField01(placeholder: "Cantidad", texto: $textoCantidad)
-                    CustomTextField01(placeholder: "Notas Adicionales", texto: $notasAdicionales)
-                    CustomToggle01(text: "Alta Prioridad", isOn: $altaPrioridad)
-                    CustomButton01(
-                        text: "Guardar",
-                        action: {
-                            procesarFormulario()
+            if categoriaViewModel.estaCargando {
+                ProgressView("Cargando...")
+            } else if let error = categoriaViewModel.mensajeError {
+                VStack {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .font(.headline)
+                }
+                .navigationTitle("Registrar Artículo")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancelar") {
+                            mostrar = false
                         }
-                    )
-                }
-                if !mensajeError.isEmpty {
-                    VStack {
-                        Text(mensajeError)
-                            .foregroundColor(.red)
-                    }
-                    .listRowBackground(Color.clear)
-                }
-                
-            }
-            .onChange(of: textoCantidad) { nuevoValor in
-                if let nuevaCantidad = Int16(nuevoValor), nuevaCantidad > 0 {
-                    cantidad = nuevaCantidad
-                } else {
-                    cantidad = 0
-                }
-            }
-            .navigationTitle("Registrar Artículo")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancelar") {
-                        mostrar = false
                     }
                 }
+            } else {
+                Form {
+                    VStack(alignment: .leading) {
+                        CustomTextField01(placeholder: "Nombre", texto: $nombre)
+                        CustomTextField01(placeholder: "Cantidad", texto: $textoCantidad)
+                        Picker("", selection: $categoria) {
+                            Text("Seleccionar categoría").tag("Seleccionar categoría")
+                            ForEach(categoriaViewModel.categorias) { item in
+                                Text(item.name).tag(item.name)
+                            }
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        .labelsHidden()
+                        .border(.gray)
+                        .cornerRadius(2)
+                        CustomTextField01(placeholder: "Notas Adicionales", texto: $notasAdicionales)
+                        CustomToggle01(text: "Alta Prioridad", isOn: $altaPrioridad)
+                        CustomButton01(
+                            text: "Guardar",
+                            action: {
+                                procesarFormulario()
+                            }
+                        )
+                    }
+                    if !mensajeError.isEmpty {
+                        VStack {
+                            Text(mensajeError)
+                                .foregroundColor(.red)
+                        }
+                        .listRowBackground(Color.clear)
+                    }
+                    
+                }
+                .onChange(of: textoCantidad) { nuevoValor in
+                    if let nuevaCantidad = Int16(nuevoValor), nuevaCantidad > 0 {
+                        cantidad = nuevaCantidad
+                    } else {
+                        cantidad = 0
+                    }
+                }
+                .navigationTitle("Registrar Artículo")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancelar") {
+                            mostrar = false
+                        }
+                    }
+                }
             }
+        }
+        .onAppear {
+            categoriaViewModel.fetchCategorias()
         }
     }
     
@@ -66,6 +100,8 @@ struct RegistroArticuloView: View {
             mensajeError = "Ingresar nombre"
         } else if cantidad == 0 {
             mensajeError = "Ingresar una cantidad válida"
+        } else if categoria == "Seleccionar categoría" {
+            mensajeError = "Seleccionar categoría"
         } else {
             registrarArticulo()
         }
@@ -76,6 +112,7 @@ struct RegistroArticuloView: View {
         articulo.id = UUID()
         articulo.nombre = nombre.trimmingCharacters(in: .whitespacesAndNewlines)
         articulo.cantidad = cantidad
+        articulo.categoria = categoria
         articulo.altaPrioridad = altaPrioridad
         articulo.notasAdicionales = notasAdicionales.trimmingCharacters(in: .whitespacesAndNewlines)
         do {
